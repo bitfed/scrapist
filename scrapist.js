@@ -1,31 +1,58 @@
 /*jslint node: true */
 'use strict';
 
+// shutup JSHint!
+var $ = $ || 'jquery';
+
+var util = require('util');
 
 var scraperjs = require('scraperjs');
 
 var searchUrl = 'http://sfbay.craigslist.org/search/sfc/roo?minAsk=550&maxAsk=850';
 
-scraperjs.DynamicScraper.startFactory();
+function scrapePosting(url) {
+  scraperjs.DynamicScraper.create(url)
+    .scrape(function () {
+      return {
+            id: $('div.postinginfos > p.postinginfo:first-child').text().slice(' ')[2],
+            title: $('h2.postingtitle span.postingtitletext').text(),
+            neighborhood: $('h2.postingtitle .postingtitletext > small').text(),
+            description: $('#postingbody').text()
+      };
+    }, function (postObject) {
+      console.log(postObject);
+  });
+}
 
-var scraperPromise = scraperjs.DynamicScraper.create(searchUrl)
-  .scrape(function () {
-    console.log(window.location.host);
+
+scraperjs.StaticScraper.create(searchUrl)
+  .scrape(function ($) {
     return $('p.row > a[href]').map(function () {
       return $(this).attr('href');
     }).get();
-  }, function (result) {
-    var postingUrl = 'http://' + searchUrl.split('/')[2] + result[0];
-    scraperjs.DynamicScraper.create(postingUrl)
-      .scrape(function () {
-        return {
-          id: $('div.postinginfos > p.postinginfo:first-child').text().split(' ')[2],
-          title: $('h2.postingtitle span.postingtitletext').text(),
-          description: $('#postingbody').text(),
-          url: 'http://' + window.location.host + window.location.pathname
-        };
-      }, function (result) {
-        console.log(result);
+  }, function (results) {
+    var urlList = results.map(function (posting) {
+      var postingUrl = 'http://' + searchUrl.split('/')[2] + posting;
+      return postingUrl;
     });
-    scraperjs.DynamicScraper.closeFactory();
+    scraperjs.StaticScraper.create(urlList[0])
+      .scrape(function ($) {
+        console.log('scraping');
+        return {
+              id: $('div.postinginfos > p.postinginfo:first-child').text().slice(' ')[2],
+              title: $('h2.postingtitle span.postingtitletext').text(),
+              neighborhood: $('h2.postingtitle .postingtitletext > small').text(),
+              description: $('#postingbody').text()
+        };
+      }, function (postObject) {
+        console.log(postObject);
+    });
   });
+
+
+
+//getSearchResults(searchUrl);
+
+
+scraperjs.DynamicScraper.closeFactory();
+
