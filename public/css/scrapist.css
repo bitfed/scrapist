@@ -1,0 +1,17 @@
+.posting-list {
+  margin: 0 auto;
+  max-width: 40em;
+}
+
+.posting {
+  background-color:white;
+  padding: 1em 2em;
+  margin: 1em;
+}
+.posting-hidden {
+  display: none;
+}
+.remove-post {
+  display: block;
+  margin: 0.5em auto 0;
+}
