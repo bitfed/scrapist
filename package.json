@@ -1,0 +1,23 @@
+{
+  "name": "Scrapist",
+  "version": "0.0.1-alpha",
+  "description": "Scrape craigslist to a database and act upon it",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitfed/scrapist.git"
+  },
+  "author": "bitfed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bitfed/scrapist/issues"
+  },
+  "homepage": "https://github.com/bitfed/scrapist",
+  "dependencies": {
+    "express": "^4.13.0",
+    "scraperjs": "^0.3.4"
+  }
+}
