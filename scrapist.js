@@ -15,9 +15,15 @@ var scraperPromise = scraperjs.DynamicScraper.create(searchUrl)
       return $(this).attr('href');
     }).get();
   }, function (result) {
-    scraperjs.DynamicScraper.create('http://' + searchUrl.split('/')[2] + result[0])
+    var postingUrl = 'http://' + searchUrl.split('/')[2] + result[0];
+    scraperjs.DynamicScraper.create(postingUrl)
       .scrape(function () {
-        return $('h2.postingtitle span.postingtitletext').text();
+        return {
+          id: $('div.postinginfos > p.postinginfo:first-child').text().split(' ')[2],
+          title: $('h2.postingtitle span.postingtitletext').text(),
+          description: $('#postingbody').text(),
+          url: 'http://' + window.location.host + window.location.pathname
+        };
       }, function (result) {
         console.log(result);
     });
